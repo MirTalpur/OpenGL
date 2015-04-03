@@ -3,17 +3,16 @@
 
 #include <string>
 
+#define MY_PI 3.14159265358979323846
 class Vector4;
 
 class Vector3
 {
 
-protected:
-    
-    float m[3];
-    
+   
 public:
-    
+    //change this to protected later
+    float m[3];
     Vector3();
     Vector3(float, float, float);
     virtual ~Vector3(void);
@@ -47,7 +46,7 @@ public:
     Vector3 normalize(void);
     
     Vector4 toVector4(float);
-    
+
     void print(std::string);
     
 };

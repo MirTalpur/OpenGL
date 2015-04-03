@@ -7,13 +7,10 @@ class Vector3;
 
 class Vector4
 {
-
-protected:
-    
-    float m[4];
     
 public:
-    
+    //change this to protected later
+    float m[4];
     Vector4();
     Vector4(float, float, float);
     Vector4(float, float, float, float);

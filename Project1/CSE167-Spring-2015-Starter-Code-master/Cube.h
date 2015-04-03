@@ -16,8 +16,9 @@ public:
     virtual void draw(DrawData&);
     virtual void update(UpdateData&);
     
-    void spin(float);
-    
+    void spin(float); 
+private:
+	bool toggle = false;
 };
 
 #endif
