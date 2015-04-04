@@ -10,6 +10,7 @@
 #include "Matrix4.h"
 #include "Vector4.h"
 #include "Vector3.h"
+#include <vector>
 /***************************************************
  * Matrix4()
  * Constructor for the Matrix4 class
@@ -108,10 +109,10 @@ Matrix4 Matrix4::multiply(Matrix4 a)
      *and add both the counts together and just keep doing that for the
      *size of the matrix.
     ********************************************************************/
-    for (int row = 0; row < 4; row++) {
-        for (int col = 0; col < 4; col++) {
+    for (int row = 0; row < MAX_SIZE; row++) {
+        for (int col = 0; col < MAX_SIZE; col++) {
             double count = 0;
-            for (int inner = 0; inner < 4; inner++){ 
+            for (int inner = 0; inner < MAX_SIZE; inner++){ 
                 count += m[row][inner] * a.m[inner][col]; 
             }
             b.m[row][col] = count;
@@ -134,8 +135,8 @@ Matrix4 Matrix4::operator * (Matrix4 a)
 Vector4 Matrix4::multiply(Vector4 a)
 {
     Vector4 b;
-    for(int i = 0; i < 4; i++){
-        for(int j = 0; j < 4; j++){
+    for(int i = 0; i < MAX_SIZE; i++){
+        for(int j = 0; j < MAX_SIZE; j++){
             b.m[i] += m[i][j] * a.m[j];
         }
     }
@@ -156,8 +157,8 @@ Vector4 Matrix4::operator * (Vector4 a)
 Vector3 Matrix4::multiply(Vector3 a)
 {
     Vector3 b;
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
+    for(int i = 0; i < MAX_SIZE - 1; i++){
+        for(int j = 0; j < MAX_SIZE - 1; j++){
             b.m[i] += m[i][j] * a.m[j];
         }
     }
@@ -285,15 +286,184 @@ Matrix4 Matrix4::transpose(void)
     }
     return b;
 }
-
-//Hint: Try basing this on code by cool people on the internet
-//In this class it is okay to use code from the internet
-//So long as you fully understand the code and can clearly explain it if asked to
-//http://stackoverflow.com/questions/2624422/efficient-4x4-matrix-inverse-affine-transform
+/***************************************************
+ * inverse(void)
+ * find the inverse of the 4 by 4 matrix
+***************************************************/
 Matrix4 Matrix4::inverse(void)
 {
     Matrix4 b;
-   //TODO  
+    /*
+    //start by searching for the maximum element 
+    //in the matrix
+    //we also want to find the max row so we can
+    //swap afterwards
+    for(int i = 0; i < MAX_SIZE; i++){
+        double maxElement = abs(m[i][i]);
+        int maxRow = i;
+        for(int j = i; j < MAX_SIZE; j++){
+            if(abs(m[j][i]) > maxElement){
+                maxElement = abs(m[j][i]);
+                maxRow = j;
+            }
+        }
+        //swap max row with the current row
+        for(int j = i; j < MAX_SIZE + 1; j++){
+            double tmp = m[maxRow][j];
+            m[maxRow][j] = m[i][j];
+            m[i][j] = tmp;
+        }
+        //make the rows below 0 in the columns
+        for(int j = i + 1; j < MAX_SIZE; j++){
+            double count = -m[j][i] / m[i][i];
+            for(int k = i; j < MAX_SIZE + 1; j++){
+                if(i == k){
+                    m[j][k] = 0;
+                    }else{
+                        m[j][k] += count * m[i][k];
+                    }
+                }
+            }
+        } 
+    //Ax = b 
+    /*
+	Vector<double> x(n);
+    for(int i = MAX_SIZE - 1; i >= 0; i--){
+        x.m[i] = m[i][MAX_SIZE] / m[i][i];
+        for(int j = i; j >= 0; j--){
+            m[j][MAX_SIZE] -= m[j][i] * m[i];
+        }
+    }*/
+    int inner = 0 , count = 0;
+    float inv[16] = {}, holder[16] = {}, det;
+    //loop to put everything into the inv array       
+    for(int i = 0; i < MAX_SIZE; i++){
+        for(int j = 0; j < MAX_SIZE; j++, inner++){
+          holder[inner] = m[i][j];
+        }
+    }
+    //multiply and set the values accordingly
+    inv[0] =   holder[5]  * holder[10] * holder[15] - 
+               holder[5]  * holder[11] * holder[14] - 
+               holder[9]  * holder[6]  * holder[15] + 
+               holder[9]  * holder[7]  * holder[14] +
+               holder[13] * holder[6]  * holder[11] - 
+               holder[13] * holder[7]  * holder[10];
+
+    inv[4] =  -holder[4]  * holder[10] * holder[15] + 
+               holder[4]  * holder[11] * holder[14] + 
+               holder[8]  * holder[6]  * holder[15] - 
+               holder[8]  * holder[7]  * holder[14] - 
+               holder[12] * holder[6]  * holder[11] + 
+               holder[12] * holder[7]  * holder[10];
+
+    inv[8] =   holder[4]  * holder[9]  * holder[15] - 
+               holder[4]  * holder[11] * holder[13] - 
+               holder[8]  * holder[5]  * holder[15] + 
+               holder[8]  * holder[7]  * holder[13] + 
+               holder[12] * holder[5]  * holder[11] - 
+               holder[12] * holder[7]  * holder[9];
+
+    inv[12] = -holder[4]  * holder[9]  * holder[14] + 
+               holder[4]  * holder[10] * holder[13] +
+               holder[8]  * holder[5]  * holder[14] - 
+               holder[8]  * holder[6]  * holder[13] - 
+               holder[12] * holder[5]  * holder[10] + 
+               holder[12] * holder[6]  * holder[9];
+
+    inv[1] =  -holder[1]  * holder[10] * holder[15] + 
+               holder[1]  * holder[11] * holder[14] + 
+               holder[9]  * holder[2]  * holder[15] - 
+               holder[9]  * holder[3]  * holder[14] - 
+               holder[13] * holder[2]  * holder[11] + 
+               holder[13] * holder[3]  * holder[10];
+
+    inv[5] =   holder[0]  * holder[10] * holder[15] - 
+               holder[0]  * holder[11] * holder[14] - 
+               holder[8]  * holder[2]  * holder[15] + 
+               holder[8]  * holder[3]  * holder[14] + 
+               holder[12] * holder[2]  * holder[11] - 
+               holder[12] * holder[3]  * holder[10];
+
+    inv[9] =  -holder[0]  * holder[9]  * holder[15] + 
+               holder[0]  * holder[11] * holder[13] + 
+               holder[8]  * holder[1]  * holder[15] - 
+               holder[8]  * holder[3]  * holder[13] - 
+               holder[12] * holder[1]  * holder[11] + 
+               holder[12] * holder[3]  * holder[9];
+
+    inv[13] =  holder[0]  * holder[9]  * holder[14] - 
+               holder[0]  * holder[10] * holder[13] - 
+               holder[8]  * holder[1]  * holder[14] + 
+               holder[8]  * holder[2]  * holder[13] + 
+               holder[12] * holder[1]  * holder[10] - 
+               holder[12] * holder[2]  * holder[9];
+
+    inv[2] =   holder[1]  * holder[6]  * holder[15] - 
+               holder[1]  * holder[7]  * holder[14] - 
+               holder[5]  * holder[2]  * holder[15] + 
+               holder[5]  * holder[3]  * holder[14] + 
+               holder[13] * holder[2]  * holder[7] - 
+               holder[13] * holder[3]  * holder[6];
+
+    inv[6] =  -holder[0]  * holder[6]  * holder[15] + 
+               holder[0]  * holder[7]  * holder[14] + 
+               holder[4]  * holder[2]  * holder[15] - 
+               holder[4]  * holder[3]  * holder[14] - 
+               holder[12] * holder[2]  * holder[7] + 
+               holder[12] * holder[3]  * holder[6];
+
+    inv[10] =  holder[0]  * holder[7]  * holder[13] - 
+               holder[4]  * holder[1]  * holder[15] + 
+               holder[4]  * holder[3]  * holder[13] + 
+               holder[0]  * holder[5]  * holder[15] - 
+               holder[12] * holder[1]  * holder[7] - 
+               holder[12] * holder[3]  * holder[5];
+
+    inv[14] = -holder[0]  * holder[5]  * holder[14] + 
+               holder[0]  * holder[6]  * holder[13] + 
+               holder[4]  * holder[1]  * holder[14] - 
+               holder[4]  * holder[2]  * holder[13] - 
+               holder[12] * holder[1]  * holder[6] + 
+               holder[12] * holder[2]  * holder[5];
+
+    inv[3] =  -holder[1]  * holder[6]  * holder[11] + 
+               holder[1]  * holder[7]  * holder[10] + 
+               holder[5]  * holder[2]  * holder[11] - 
+               holder[5]  * holder[3]  * holder[10] - 
+               holder[9]  * holder[2]  * holder[7] + 
+               holder[9]  * holder[3]  * holder[6];
+
+    inv[7] =   holder[0]  * holder[6]  * holder[11] - 
+               holder[0]  * holder[7]  * holder[10] - 
+               holder[4]  * holder[2]  * holder[11] + 
+               holder[4]  * holder[3]  * holder[10] + 
+               holder[8]  * holder[2]  * holder[7] - 
+               holder[8]  * holder[3]  * holder[6];
+
+    inv[11] = -holder[0]  * holder[5]  * holder[11] + 
+               holder[0]  * holder[7]  * holder[9]  + 
+               holder[4]  * holder[1]  * holder[11] - 
+               holder[4]  * holder[3]  * holder[9]  - 
+               holder[8]  * holder[1]  * holder[7]  + 
+               holder[8]  * holder[3]  * holder[5];
+
+    inv[15] =  holder[0]  * holder[5]  * holder[10] - 
+               holder[0]  * holder[6]  * holder[9]  - 
+               holder[4]  * holder[1]  * holder[10] + 
+               holder[4]  * holder[2]  * holder[9]  + 
+               holder[8]  * holder[1]  * holder[6]  - 
+               holder[8]  * holder[2]  * holder[5];
+    
+    det = holder[0] * inv[0] + holder[1] * inv[4] + holder[2] * inv[8] + holder[3] * inv[12]; 
+
+    det = 1.0 / det;
+
+    for(int i = 0; i < MAX_SIZE; i++){
+        for(int j = 0; j < MAX_SIZE; j++, count++){
+            b.m[i][j] = inv[count] * det;
+        }
+    }
     return b;
 }
 

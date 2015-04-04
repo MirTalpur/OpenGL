@@ -47,8 +47,7 @@ int main(int argc, char *argv[])
     //Initialize the Window:
     //The body of this function is a great place to load textures, shaders, etc.
     //and do any operations/calculations/configurations that only need to happen once.
-    Window::initialize();
-    
+    Window::initialize(); 
     //Start up the render loop!
     glutMainLoop();
     

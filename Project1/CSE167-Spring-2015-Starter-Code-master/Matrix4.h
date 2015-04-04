@@ -2,7 +2,8 @@
 #define CSE167_Matrix4_h
 
 #include <string>
-
+#define MAX_SIZE 4
+#define MAX_SIZE_1D 16
 class Vector3;
 class Vector4;
 
@@ -15,10 +16,9 @@ protected:
     //The first index is for the column, and the second is for the row
     //Ex: m[2][1] is the 3rd column (index 2) and second element in that column (index 1)
     //This is the matrix format used by OpenGL internally.
-    float m[4][4];
     
 public:
-    
+    float m[4][4];
     Matrix4();
     Matrix4(float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float);
     
