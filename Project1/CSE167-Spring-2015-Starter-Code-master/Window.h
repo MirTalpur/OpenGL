@@ -12,7 +12,8 @@ public:
     static void idleCallback(void);
     static void reshapeCallback(int, int);
     static void displayCallback(void);
-    
+    static void processNormalKeys(unsigned char, int, int);
+    static void processSpecialKeys(int, int, int);
 };
 
 #endif

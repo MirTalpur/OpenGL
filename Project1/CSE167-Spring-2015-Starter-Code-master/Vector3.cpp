@@ -8,6 +8,8 @@
 #include <iostream>
 #include <cstring>
 #include "Vector4.h"
+#include "Matrix4.h"
+#include "Drawable.h"
 
 /***************************************************
  * Vector3()
@@ -254,6 +256,14 @@ Vector4 Vector3::toVector4(float w)
 ***************************************************/
 void Vector3::print(std::string comment)
 {
+    Vector4 coordinates(0, 0, 0, 1);
+    Vector4 exactCoordinates;
+	Drawable world;
     std::cout << comment << std::endl;
-    std::cout << "<x:" << m[0] <<  ", y:" << m[1] << ", z:" << m[2] << ">" << std::endl;
+//  std::cout << "<x:" << m[0] <<  ", y:" << m[1] << ", z:" << m[2] << ">" << std::endl;
+    for (int i = 0; i < 4; ++i)
+    {
+        exactCoordinates = world.toWorld * coordinates;
+        std::cout << "<x:" << exactCoordinates[0] <<  ", y:" << exactCoordinates[1] << ", z:" << exactCoordinates[2] << ", w:" << exactCoordinates[3] << ">" << std::endl; 
+    }
 }

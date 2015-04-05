@@ -689,7 +689,7 @@ bool MathTestBench::test_m4_inverse(void)
     Matrix4 a(4,0,0,0,0,0,2,0,0,1,2,0,1,0,0,1);
     Matrix4 b(0.25,0,0,0,0,-1.0,1,0,0,0.5,0,0,-0.25,0,0,1);
     Matrix4 answer = a * b;
-    pass = approx(answer.m[0][0],0.25) && approx(answer.m[1][1],-1) && approx(answer.m[1][2],1) && approx(answer.m[2][1],0.5) && approx(answer.m[3][0],-0.25);
+    pass = approx(answer.m[0][0],1) && approx(answer.m[1][1],1) && approx(answer.m[2][2],1) && approx(answer.m[3][3],1);
     printTestLine("Matrix4.inverse", pass);
     return pass;
 }

@@ -258,7 +258,7 @@ Matrix4 Matrix4::makeTranslate(float x, float y, float z)
     identity();
     m[0][3] = x;
     m[1][3] = y;
-    m[2][3] = z;
+    m[2][3] = z;     
     return *this;
 }
 /***************************************************
@@ -455,8 +455,8 @@ Matrix4 Matrix4::inverse(void)
                holder[8]  * holder[1]  * holder[6]  - 
                holder[8]  * holder[2]  * holder[5];
     
-    det = holder[0] * inv[0] + holder[1] * inv[4] + holder[2] * inv[8] + holder[3] * inv[12]; 
-
+    det = holder[0] * inv[0] + holder[1] * inv[4] + holder[2] * inv[8] + holder[3] * inv[12];
+    
     det = 1.0 / det;
 
     for(int i = 0; i < MAX_SIZE; i++){

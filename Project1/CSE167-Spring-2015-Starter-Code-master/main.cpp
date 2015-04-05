@@ -1,3 +1,8 @@
+/***************************************************
+ * Mir Ali Talpur
+ * main.cpp
+ * 4/2/2015
+***************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -40,7 +45,9 @@ int main(int argc, char *argv[])
     glutReshapeFunc(Window::reshapeCallback);
     glutIdleFunc(Window::idleCallback);
     //Register the callback for the keyboard
+    glutKeyboardFunc(Window::processNormalKeys);
     //Register the callback for the keyboard function keys
+    glutSpecialFunc(Window::processSpecialKeys);
     //Register the callback for the mouse
     //Register the callback for the mouse motion
     

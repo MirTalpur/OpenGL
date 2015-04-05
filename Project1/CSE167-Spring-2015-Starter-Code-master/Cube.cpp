@@ -23,7 +23,7 @@ Cube::~Cube()
 void Cube::draw(DrawData& data)
 {
     float halfSize = size/2.0;
-    
+    Matrix4 transposeMatrix;
     //Apply the material properties
     //From here forward anything drawn will be drawn with these material
     material.apply();
@@ -33,7 +33,9 @@ void Cube::draw(DrawData& data)
     
     //Push a save state onto the matrix stack, and multiply in the toWorld matrix
     glPushMatrix();
-    glMultMatrixf(toWorld.ptr());
+    transposeMatrix = toWorld;
+    transposeMatrix = transposeMatrix.transpose();
+    glMultMatrixf(transposeMatrix.ptr());
     
     //Make cube!
     //Note: The glBegin, and glEnd should always be as close to the glNormal/glVertex calls as possible
@@ -100,16 +102,38 @@ void Cube::update(UpdateData& data)
     //
 }
 
-void Cube::spin(float radians)
-{
+void Cube::spin(float radians){
     Matrix4 rotation;
-    rotation.makeRotateY(radians);
+    rotation.makeRotateY(toggle ? radians : -1 * radians);
     
     toWorld = toWorld * rotation;
 }
 
+void Cube::translate(float x, float y, float z){
+    Matrix4 translation;
+    translation = translation.makeTranslate(x, y, z);
+    toWorld = translation * toWorld;
+}
 
 
+void Cube::scale(float s){
+    Matrix4 scaleMatrix;
+    scaleMatrix.makeScale(s);
 
+    toWorld = scaleMatrix * toWorld;
+}
+
+void Cube::reset(){
+    Matrix4 resetMatrix;
+    resetMatrix.identity();
+    toWorld = resetMatrix;
+}
+
+void Cube::orbit(float orbitValue){
+    Matrix4 orbitMatrix;
+    orbitMatrix.makeRotateZ(orbitValue);
+
+    toWorld = orbitMatrix * toWorld;
+}
 
 

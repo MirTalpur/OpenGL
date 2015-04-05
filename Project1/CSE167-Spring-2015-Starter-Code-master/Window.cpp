@@ -98,12 +98,56 @@ void Window::displayCallback()
     //Swap the off-screen buffer (the one we just drew to) with the on-screen buffer
     glutSwapBuffers();
 }
-
-
-//TODO: Keyboard callbacks!
-
+//Keyboard callbacks!
+void Window::processNormalKeys(unsigned char key, int x, int y){
+    Vector3 callFunction;
+    switch(key){
+        case 27: 
+                exit(0);
+                break;
+        case 't':
+                Globals::cube.setToggle(!Globals::cube.getToggle());
+                callFunction.print("Displaying");
+                break;
+        case 'x':
+                Globals::cube.translate(-1.0, 0.0, 0.0);
+                break;
+        case 'X':
+                Globals::cube.translate(1.0, 0.0, 0.0);
+                break;
+        case 'y':
+                Globals::cube.translate(0.0, -1.0, 0.0);
+                break;
+        case 'Y':
+                Globals::cube.translate(0.0, 1.0, 0.0);
+                break;
+        case 'z':
+                Globals::cube.translate(0.0, 0.0, -1.0);
+                break;
+        case 'Z':
+                Globals::cube.translate(0.0, 0.0, 1.0);
+                break;
+        case 'r':
+                Globals::cube.reset();
+                break;
+        case 'o':
+                Globals::cube.orbit(5);
+                break;
+        case 'O':
+                Globals::cube.orbit(-5); 
+                break;
+        case 's':
+                Globals::cube.scale(0.5);
+                break;
+        case 'S':
+                Globals::cube.scale(1.5);
+                break;
+    }
+}
 //TODO: Function Key callbacks!
+void Window::processSpecialKeys(int key, int x, int y){
 
+}
 //TODO: Mouse callbacks!
 
 //TODO: Mouse Motion callbacks!
